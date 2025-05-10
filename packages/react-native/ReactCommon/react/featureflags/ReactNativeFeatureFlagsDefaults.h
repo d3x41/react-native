@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<675bd9dfcc6ae896f5b61588104bba04>>
+ * @generated SignedSource<<f54c5becf4091df57e4e11d1c04698ab>>
  */
 
 /**
@@ -67,6 +67,14 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return true;
   }
 
+  bool enableDestroyShadowTreeRevisionAsync() override {
+    return false;
+  }
+
+  bool enableDoubleMeasurementFixAndroid() override {
+    return false;
+  }
+
   bool enableEagerRootViewAttachment() override {
     return false;
   }
@@ -111,11 +119,23 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return false;
   }
 
+  bool enableNetworkEventReporting() override {
+    return false;
+  }
+
   bool enableNewBackgroundAndBorderDrawables() override {
     return true;
   }
 
+  bool enablePreparedTextLayout() override {
+    return false;
+  }
+
   bool enablePropsUpdateReconciliationAndroid() override {
+    return false;
+  }
+
+  bool enableResourceTimingAPI() override {
     return false;
   }
 
@@ -151,6 +171,10 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return false;
   }
 
+  bool incorporateMaxLinesDuringAndroidLayout() override {
+    return true;
+  }
+
   bool traceTurboModulePromiseRejectionsOnAndroid() override {
     return false;
   }
@@ -163,7 +187,7 @@ class ReactNativeFeatureFlagsDefaults : public ReactNativeFeatureFlagsProvider {
     return false;
   }
 
-  bool useEditTextStockAndroidFocusBehavior() override {
+  bool useAndroidTextLayoutWidthDirectly() override {
     return true;
   }
 

@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<5a02fc6cd183f41724b3599fad1fd507>>
+ * @generated SignedSource<<d3ac43cad11c74d7f7ee12e776f99282>>
  */
 
 /**
@@ -43,6 +43,10 @@ public interface ReactNativeFeatureFlagsProvider {
 
   @DoNotStrip public fun enableCustomFocusSearchOnClippedElementsAndroid(): Boolean
 
+  @DoNotStrip public fun enableDestroyShadowTreeRevisionAsync(): Boolean
+
+  @DoNotStrip public fun enableDoubleMeasurementFixAndroid(): Boolean
+
   @DoNotStrip public fun enableEagerRootViewAttachment(): Boolean
 
   @DoNotStrip public fun enableFabricLogs(): Boolean
@@ -65,9 +69,15 @@ public interface ReactNativeFeatureFlagsProvider {
 
   @DoNotStrip public fun enableNativeCSSParsing(): Boolean
 
+  @DoNotStrip public fun enableNetworkEventReporting(): Boolean
+
   @DoNotStrip public fun enableNewBackgroundAndBorderDrawables(): Boolean
 
+  @DoNotStrip public fun enablePreparedTextLayout(): Boolean
+
   @DoNotStrip public fun enablePropsUpdateReconciliationAndroid(): Boolean
+
+  @DoNotStrip public fun enableResourceTimingAPI(): Boolean
 
   @DoNotStrip public fun enableSynchronousStateUpdates(): Boolean
 
@@ -85,13 +95,15 @@ public interface ReactNativeFeatureFlagsProvider {
 
   @DoNotStrip public fun fuseboxNetworkInspectionEnabled(): Boolean
 
+  @DoNotStrip public fun incorporateMaxLinesDuringAndroidLayout(): Boolean
+
   @DoNotStrip public fun traceTurboModulePromiseRejectionsOnAndroid(): Boolean
 
   @DoNotStrip public fun updateRuntimeShadowNodeReferencesOnCommit(): Boolean
 
   @DoNotStrip public fun useAlwaysAvailableJSErrorHandling(): Boolean
 
-  @DoNotStrip public fun useEditTextStockAndroidFocusBehavior(): Boolean
+  @DoNotStrip public fun useAndroidTextLayoutWidthDirectly(): Boolean
 
   @DoNotStrip public fun useFabricInterop(): Boolean
 

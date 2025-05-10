@@ -9,7 +9,7 @@
  * @oncall react_native
  */
 
-import 'react-native/Libraries/Core/InitializeCore';
+import '@react-native/fantom/src/setUpDefaultReactNativeEnvironment';
 
 import type {HostInstance} from 'react-native';
 
@@ -83,12 +83,19 @@ describe('onScroll', () => {
     const element = ensureInstance(scrollViewRef.current, ReactNativeElement);
 
     Fantom.runOnUIThread(() => {
-      Fantom.enqueueNativeEvent(element, 'scroll', {
-        contentOffset: {
-          x: 0,
-          y: 1,
+      Fantom.enqueueNativeEvent(
+        element,
+        'scroll',
+        {
+          contentOffset: {
+            x: 0,
+            y: 1,
+          },
         },
-      });
+        {
+          isUnique: true,
+        },
+      );
       Fantom.enqueueNativeEvent(
         element,
         'scroll',
