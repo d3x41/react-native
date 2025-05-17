@@ -12,19 +12,21 @@
  * @fantom_flags enableFixForParentTagDuringReparenting:true
  */
 
-import 'react-native/Libraries/Core/InitializeCore.js';
+import '@react-native/fantom/src/setUpDefaultReactNativeEnvironment';
 
 import type {HostInstance} from 'react-native';
 
 import ensureInstance from '../../../../src/private/__tests__/utilities/ensureInstance';
 import * as Fantom from '@react-native/fantom';
+import nullthrows from 'nullthrows';
 import * as React from 'react';
-import {Modal, ScrollView, View} from 'react-native';
+import {createRef, useState} from 'react';
+import {FlatList, Modal, ScrollView, View} from 'react-native';
 import ReactNativeElement from 'react-native/src/private/webapis/dom/nodes/ReactNativeElement';
 
 test('basic culling', () => {
   const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -78,7 +80,7 @@ test('basic culling', () => {
 
 test('recursive culling', () => {
   const root = Fantom.createRoot({viewportHeight: 100, viewportWidth: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -235,7 +237,7 @@ test('recursive culling', () => {
 
 test('recursive culling when initial offset is negative', () => {
   const root = Fantom.createRoot({viewportHeight: 874, viewportWidth: 402});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -290,7 +292,7 @@ test('recursive culling when initial offset is negative', () => {
 
 test('deep nesting', () => {
   const root = Fantom.createRoot({viewportHeight: 100, viewportWidth: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -457,7 +459,7 @@ test('adding new item into area that is culled', () => {
 });
 
 test('initial render', () => {
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
   const root = Fantom.createRoot({viewportHeight: 100, viewportWidth: 100});
 
   Fantom.runTask(() => {
@@ -541,7 +543,7 @@ test('unmounting culled elements', () => {
 
 // TODO: only elements in ScrollView are culled.
 test('basic culling smaller ScrollView', () => {
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
   const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
 
   Fantom.runTask(() => {
@@ -599,7 +601,7 @@ test('views are not culled when outside of viewport', () => {
 
 test('culling with transform move', () => {
   const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -641,7 +643,7 @@ test('culling with transform move', () => {
 
 test('culling with recursive transform move', () => {
   const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -686,7 +688,7 @@ test('culling with recursive transform move', () => {
 
 test('culling with transform scale', () => {
   const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -761,7 +763,7 @@ test('culling when ScrollView parent has transform', () => {
 
 test('culling inside of Modal', () => {
   const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
-  const nodeRef = React.createRef<HostInstance>();
+  const nodeRef = createRef<HostInstance>();
 
   Fantom.runTask(() => {
     root.render(
@@ -818,10 +820,60 @@ test('culling inside of Modal', () => {
   ]);
 });
 
+test('nesting inside FlatList with item resizing', () => {
+  const root = Fantom.createRoot({viewportHeight: 100, viewportWidth: 100});
+  let _setIsExpanded = null;
+  function ExpandableComponent() {
+    const [isExpanded, setIsExpanded] = useState(false);
+    _setIsExpanded = setIsExpanded;
+    return <View>{isExpanded && <View style={{height: 80.5}} />}</View>;
+  }
+
+  Fantom.runTask(() => {
+    root.render(
+      <FlatList
+        style={{height: 100, width: 100}}
+        data={[{key: 'one'}, {key: 'two'}]}
+        renderItem={({item}) => {
+          if (item.key === 'one') {
+            return <ExpandableComponent />;
+          } else if (item.key === 'two') {
+            return (
+              // position: 'absolute' is the important part that prevents Yoga from overcloning.
+              // When Yoga overclones, differentiator visits all cloned nodes and culling is correctly
+              // applied.
+              <View style={{position: 'absolute'}}>
+                <View nativeID={'parent'} style={{marginTop: 10}}>
+                  <View
+                    nativeID={'child'}
+                    style={{height: 10, width: 75, marginTop: 10}}
+                  />
+                </View>
+              </View>
+            );
+          }
+        }}
+      />,
+    );
+  });
+
+  expect(root.takeMountingManagerLogs()).toContain(
+    'Create {type: "View", nativeID: "child"}',
+  );
+
+  Fantom.runTask(() => {
+    nullthrows(_setIsExpanded)(true);
+  });
+
+  expect(root.takeMountingManagerLogs()).toContain(
+    'Delete {type: "View", nativeID: "child"}',
+  );
+});
+
 describe('reparenting', () => {
   test('view flattening with culling', () => {
     const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
-    const nodeRef = React.createRef<HostInstance>();
+    const nodeRef = createRef<HostInstance>();
 
     Fantom.runTask(() => {
       root.render(
@@ -1193,6 +1245,81 @@ describe('reparenting', () => {
     ]);
   });
 
+  test('parent-child flattening with child culled', () => {
+    const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
+    const nodeRef = createRef<HostInstance>();
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView
+          style={{height: 100, width: 100}}
+          ref={nodeRef}
+          contentOffset={{x: 0, y: 50}}>
+          <View
+            style={{
+              marginTop: 100,
+              opacity: 0.5,
+            }}>
+            <View
+              style={{
+                marginTop: 50,
+                opacity: 0.1,
+              }}>
+              <View
+                nativeID={'child'}
+                style={{height: 10, width: 10, marginTop: 5}}
+              />
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "RootView", nativeID: (root)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
+    ]);
+
+    // force parent-child to be flattened.
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView
+          style={{height: 100, width: 100}}
+          ref={nodeRef}
+          contentOffset={{x: 0, y: 50}}>
+          <View
+            style={{
+              marginTop: 100,
+            }}>
+            <View
+              style={{
+                marginTop: 50,
+              }}>
+              <View
+                nativeID={'child'}
+                style={{height: 10, width: 10, marginTop: 5}}
+              />
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Remove {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Remove {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Delete {type: "View", nativeID: (N/A)}',
+      'Delete {type: "View", nativeID: (N/A)}',
+    ]);
+  });
+
   test('parent-child switching from unflattened-flattened to flattened-unflattened', () => {
     const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
 
@@ -1290,7 +1417,7 @@ describe('reparenting', () => {
       'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
     ]);
 
-    const nodeRef = React.createRef<HostInstance>();
+    const nodeRef = createRef<HostInstance>();
 
     // Now update opacity to unflattned the container and add a child that has a culled descendant.
     Fantom.runTask(() => {
@@ -1346,6 +1473,179 @@ describe('reparenting', () => {
       'Update {type: "ScrollView", nativeID: (N/A)}',
       'Create {type: "View", nativeID: "grandchild"}',
       'Insert {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+    ]);
+  });
+
+  test('unflattening and creating a deeper subtree that is partially culled', () => {
+    const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
+
+    // First render with a flattened view container that is visible.
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView
+          style={{height: 100, width: 100}}
+          contentOffset={{x: 0, y: 115}}>
+          <View style={{marginTop: 200}} />
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "RootView", nativeID: (root)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
+    ]);
+
+    const nodeRef = createRef<HostInstance>();
+
+    // Now update opacity to unflattned the container and add a child that has a culled descendant.
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView
+          style={{height: 100, width: 100}}
+          ref={nodeRef}
+          contentOffset={{x: 0, y: 115}}>
+          <View
+            style={{
+              marginTop: 200,
+              opacity: 0.5, // Force unflattening
+            }}>
+            <View
+              nativeID="child"
+              style={{
+                marginTop: 10,
+                height: 10,
+                width: 10,
+              }}>
+              <View
+                nativeID="grandchild"
+                style={{
+                  marginTop: 5, // 215
+                  height: 5,
+                  width: 5,
+                }}>
+                <View
+                  nativeID="grandgrandchild"
+                  style={{
+                    marginTop: 2.5, // 217.5
+                    height: 2.5,
+                    width: 2.5,
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "child"}',
+      'Create {type: "View", nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+    ]);
+
+    const element = ensureInstance(nodeRef.current, ReactNativeElement);
+
+    // Scroll down to see the grandchild.
+    Fantom.scrollTo(element, {
+      x: 0,
+      y: 118,
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "grandgrandchild"}',
+      'Insert {type: "View", parentNativeID: "grandchild", index: 0, nativeID: "grandgrandchild"}',
+    ]);
+  });
+
+  test('flattening and deleting a deeper subtree that is partially culled', () => {
+    const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
+
+    // First render with a unflattened view container that is visible and a subtree that is partially culled.
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView
+          style={{height: 100, width: 100}}
+          contentOffset={{x: 0, y: 115}}>
+          <View style={{marginTop: 200, opacity: 0.5}}>
+            <View
+              nativeID="child"
+              style={{
+                marginTop: 10,
+                height: 10,
+                width: 10,
+              }}>
+              <View
+                nativeID="grandchild"
+                style={{
+                  marginTop: 5,
+                  height: 5,
+                  width: 5,
+                }}>
+                <View
+                  nativeID="grandgrandchild"
+                  style={{
+                    marginTop: 2.5,
+                    height: 2.5,
+                    width: 2.5,
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    // All views are mounted, except for the grandchild.
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "RootView", nativeID: (root)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "child"}',
+      'Create {type: "View", nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
+    ]);
+
+    // Now change opacity to the default to flatten the container and delete container's subtree.
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView
+          style={{height: 100, width: 100}}
+          contentOffset={{x: 0, y: 115}}>
+          <View
+            style={{
+              marginTop: 200,
+            }}
+          />
+        </ScrollView>,
+      );
+    });
+
+    // Note that the grandchild is not deleted because it was not previously mounted.
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: (N/A)}',
+      'Remove {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+      'Delete {type: "View", nativeID: "grandchild"}',
+      'Remove {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+      'Remove {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Delete {type: "View", nativeID: (N/A)}',
+      'Delete {type: "View", nativeID: "child"}',
     ]);
   });
 
@@ -1458,7 +1758,7 @@ describe('reparenting', () => {
       'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
     ]);
 
-    const nodeRef = React.createRef<HostInstance>();
+    const nodeRef = createRef<HostInstance>();
 
     // Now change unflattened view container to flattened and change its child to be unflattened.
     Fantom.runTask(() => {
@@ -1548,7 +1848,7 @@ describe('reparenting', () => {
       'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
     ]);
 
-    const nodeRef = React.createRef<HostInstance>();
+    const nodeRef = createRef<HostInstance>();
 
     // Now change unflattened view container to flattened and change its child to be unflattened.
     Fantom.runTask(() => {
@@ -1668,6 +1968,244 @@ describe('reparenting', () => {
       'Create {type: "View", nativeID: (N/A)}',
       'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
       'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "grandchild"}',
+    ]);
+  });
+
+  test('nested scroll view with unflattened wrapper', () => {
+    const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView style={{width: 100, height: 100}}>
+          <View>
+            <ScrollView
+              contentOffset={{x: 15, y: 0}}
+              style={{height: 100, width: 100}}
+              horizontal={true}>
+              <View nativeID="child" style={{width: 10, height: 10}} />
+            </ScrollView>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "RootView", nativeID: (root)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
+    ]);
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView style={{height: 100, width: 100, padding: 1}}>
+          <View nativeID="unflattened">
+            <ScrollView
+              contentOffset={{x: 15, y: 0}}
+              style={{height: 100, width: 100}}
+              horizontal={true}>
+              <View nativeID="child" style={{width: 10, height: 10}} />
+            </ScrollView>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: (N/A)}',
+      'Remove {type: "ScrollView", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "unflattened"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "unflattened"}',
+      'Insert {type: "ScrollView", parentNativeID: "unflattened", index: 0, nativeID: (N/A)}',
+    ]);
+  });
+
+  test('reparenting with reparented subtree changing its marginTop', () => {
+    const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
+    const nodeRef = createRef<HostInstance>();
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView ref={nodeRef} style={{width: 100, height: 100}}>
+          <View>
+            <View
+              style={{
+                height: 100,
+                width: 100,
+              }}
+              collapsableChildren={false}>
+              <View nativeID="child" style={{width: 10, height: 10}}>
+                <View
+                  nativeID="grandchild"
+                  style={{width: 5, height: 5, marginTop: 5}}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "RootView", nativeID: (root)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "child"}',
+      'Create {type: "View", nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
+    ]);
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView ref={nodeRef} style={{height: 100, width: 100}}>
+          <View nativeID="unflattened">
+            <View
+              style={{
+                height: 100,
+                width: 100,
+                marginTop: 97,
+              }}
+              collapsableChildren={false}>
+              <View nativeID="child" style={{width: 10, height: 10}}>
+                <View
+                  nativeID="grandchild"
+                  style={{width: 5, height: 5, marginTop: 5}}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: "child"}',
+      'Remove {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+      'Create {type: "View", nativeID: "unflattened"}',
+      'Remove {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+      'Delete {type: "View", nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "unflattened"}',
+      'Insert {type: "View", parentNativeID: "unflattened", index: 0, nativeID: "child"}',
+    ]);
+
+    const element = ensureInstance(nodeRef.current, ReactNativeElement);
+
+    Fantom.scrollTo(element, {
+      x: 0,
+      y: 50,
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+    ]);
+  });
+
+  test('reparenting deep tree with reparented subtree changing its marginTop', () => {
+    const root = Fantom.createRoot({viewportWidth: 100, viewportHeight: 100});
+    const nodeRef = createRef<HostInstance>();
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView ref={nodeRef} style={{width: 100, height: 100}}>
+          <View>
+            <View
+              style={{
+                height: 100,
+                width: 100,
+              }}
+              collapsableChildren={false}>
+              <View nativeID="child" style={{width: 10, height: 10}}>
+                <View
+                  nativeID="grandchild"
+                  style={{width: 5, height: 5, marginTop: 5}}>
+                  <View
+                    nativeID="grandgrandchild"
+                    style={{width: 5, height: 5, marginTop: 5}}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "RootView", nativeID: (root)}',
+      'Create {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "child"}',
+      'Create {type: "View", nativeID: "grandchild"}',
+      'Create {type: "View", nativeID: "grandgrandchild"}',
+      'Insert {type: "View", parentNativeID: "grandchild", index: 0, nativeID: "grandgrandchild"}',
+      'Insert {type: "View", parentNativeID: "child", index: 0, nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: (N/A)}',
+      'Insert {type: "ScrollView", parentNativeID: (root), index: 0, nativeID: (N/A)}',
+    ]);
+
+    Fantom.runTask(() => {
+      root.render(
+        <ScrollView ref={nodeRef} style={{height: 100, width: 100}}>
+          <View nativeID="unflattened">
+            <View
+              style={{
+                height: 100,
+                width: 100,
+                marginTop: 94,
+              }}
+              collapsableChildren={false}>
+              <View nativeID="child" style={{width: 10, height: 10}}>
+                <View
+                  nativeID="grandchild"
+                  style={{width: 5, height: 5, marginTop: 5}}>
+                  <View
+                    nativeID="grandgrandchild"
+                    style={{width: 2.5, height: 2.5, marginTop: 2.5}}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </ScrollView>,
+      );
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: (N/A)}',
+      'Update {type: "View", nativeID: "child"}',
+      'Remove {type: "View", parentNativeID: (N/A), index: 0, nativeID: "child"}',
+      'Create {type: "View", nativeID: "unflattened"}',
+      'Remove {type: "View", parentNativeID: "grandchild", index: 0, nativeID: "grandgrandchild"}',
+      'Delete {type: "View", nativeID: "grandgrandchild"}',
+      'Update {type: "View", nativeID: "grandchild"}',
+      'Insert {type: "View", parentNativeID: (N/A), index: 0, nativeID: "unflattened"}',
+      'Insert {type: "View", parentNativeID: "unflattened", index: 0, nativeID: "child"}',
+    ]);
+
+    const element = ensureInstance(nodeRef.current, ReactNativeElement);
+
+    Fantom.scrollTo(element, {
+      x: 0,
+      y: 50,
+    });
+
+    expect(root.takeMountingManagerLogs()).toEqual([
+      'Update {type: "ScrollView", nativeID: (N/A)}',
+      'Create {type: "View", nativeID: "grandgrandchild"}',
+      'Insert {type: "View", parentNativeID: "grandchild", index: 0, nativeID: "grandgrandchild"}',
     ]);
   });
 });

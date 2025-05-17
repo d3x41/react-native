@@ -7,16 +7,19 @@
  * @flow strict-local
  * @format
  * @oncall react_native
+ * @fantom_flags utilizeTokensInIntersectionObserver:true
  */
 
-import 'react-native/Libraries/Core/InitializeCore';
+import '@react-native/fantom/src/setUpDefaultReactNativeEnvironment';
 
 import type {HostInstance} from 'react-native';
 import type IntersectionObserverType from 'react-native/src/private/webapis/intersectionobserver/IntersectionObserver';
 
 import ensureInstance from '../../../__tests__/utilities/ensureInstance';
+import {createShadowNodeReferenceCountingRef} from '../../../__tests__/utilities/ShadowNodeReferenceCounter';
 import * as Fantom from '@react-native/fantom';
 import * as React from 'react';
+import {createRef} from 'react';
 import {ScrollView, View} from 'react-native';
 import setUpIntersectionObserver from 'react-native/src/private/setup/setUpIntersectionObserver';
 import ReactNativeElement from 'react-native/src/private/webapis/dom/nodes/ReactNativeElement';
@@ -88,7 +91,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should throw if `root` is provided', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -327,7 +330,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should start observing the target when called for the first time (using normalized thresholds)', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
       const root = Fantom.createRoot({
         viewportWidth: 1000,
         viewportHeight: 1000,
@@ -379,7 +382,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should ignore subsequent calls to observe a target already being observed', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -417,7 +420,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should ignore disconnected targets', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -443,8 +446,8 @@ describe('IntersectionObserver', () => {
     });
 
     it('should report completely non-intersecting initial state correctly', () => {
-      const nodeRef = React.createRef<HostInstance>();
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot({
         viewportWidth: 1000,
@@ -506,8 +509,8 @@ describe('IntersectionObserver', () => {
     });
 
     it('should report partial non-intersecting initial state correctly', () => {
-      const nodeRef = React.createRef<HostInstance>();
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot({
         viewportWidth: 1000,
@@ -570,8 +573,8 @@ describe('IntersectionObserver', () => {
     });
 
     it('should report partial intersecting initial state correctly', () => {
-      const nodeRef = React.createRef<HostInstance>();
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot({
         viewportWidth: 1000,
@@ -632,8 +635,8 @@ describe('IntersectionObserver', () => {
     });
 
     it('should report subsequent updates correctly', () => {
-      const nodeRef = React.createRef<HostInstance>();
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot({
         viewportWidth: 1000,
@@ -725,7 +728,7 @@ describe('IntersectionObserver', () => {
     it('should report updates to the right observers', () => {
       let maybeNode1;
       let maybeNode2;
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
       let observer1: IntersectionObserver;
       let observer2: IntersectionObserver;
 
@@ -843,9 +846,46 @@ describe('IntersectionObserver', () => {
       });
     });
 
+    it('should not retain initial children of observed targets', () => {
+      const root = Fantom.createRoot();
+      observer = new IntersectionObserver(() => {});
+
+      const [getReferenceCount, ref] = createShadowNodeReferenceCountingRef();
+
+      const observeRef: React.RefSetter<
+        React.ElementRef<typeof View>,
+      > = instance => {
+        const element = ensureReactNativeElement(instance);
+        observer.observe(element);
+        return () => {
+          observer.unobserve(element);
+        };
+      };
+
+      function Observe({children}: $ReadOnly<{children?: React.Node}>) {
+        return <View ref={observeRef}>{children}</View>;
+      }
+
+      Fantom.runTask(() => {
+        root.render(
+          <Observe>
+            <View ref={ref} />
+          </Observe>,
+        );
+      });
+
+      expect(getReferenceCount()).toBeGreaterThan(0);
+
+      Fantom.runTask(() => {
+        root.render(<Observe />);
+      });
+
+      expect(getReferenceCount()).toBe(0);
+    });
+
     describe('rootThreshold', () => {
       it('should report partial intersecting initial state correctly', () => {
-        const nodeRef = React.createRef<HostInstance>();
+        const nodeRef = createRef<HostInstance>();
 
         const root = Fantom.createRoot({
           viewportWidth: 1000,
@@ -900,8 +940,8 @@ describe('IntersectionObserver', () => {
       });
 
       it('should report partial non-intersecting initial state correctly', () => {
-        const nodeRef = React.createRef<HostInstance>();
-        const scrollNodeRef = React.createRef<HostInstance>();
+        const nodeRef = createRef<HostInstance>();
+        const scrollNodeRef = createRef<HostInstance>();
 
         const root = Fantom.createRoot({
           viewportWidth: 1000,
@@ -961,8 +1001,8 @@ describe('IntersectionObserver', () => {
       });
 
       it('should report completely non-intersecting initial state correctly', () => {
-        const nodeRef = React.createRef<HostInstance>();
-        const scrollNodeRef = React.createRef<HostInstance>();
+        const nodeRef = createRef<HostInstance>();
+        const scrollNodeRef = createRef<HostInstance>();
 
         const root = Fantom.createRoot({
           viewportWidth: 1000,
@@ -1022,8 +1062,8 @@ describe('IntersectionObserver', () => {
       });
 
       it('should report subsequent updates correctly', () => {
-        const nodeRef = React.createRef<HostInstance>();
-        const scrollNodeRef = React.createRef<HostInstance>();
+        const nodeRef = createRef<HostInstance>();
+        const scrollNodeRef = createRef<HostInstance>();
 
         const root = Fantom.createRoot({
           viewportWidth: 1000,
@@ -1145,7 +1185,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should ignore the call if `target` was not observed (not fail)', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -1164,8 +1204,8 @@ describe('IntersectionObserver', () => {
     });
 
     it('should stop observing the target if it was observed', () => {
-      const nodeRef = React.createRef<HostInstance>();
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       // View is not intersecting with ScrollView
@@ -1213,7 +1253,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should stop observing the target if it was observed (detached target after observing)', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -1246,7 +1286,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should stop observing the target if it was observed (detached target before observing)', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -1266,7 +1306,7 @@ describe('IntersectionObserver', () => {
     });
 
     it('should not report the initial state if the target is unobserved before it is delivered', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -1287,8 +1327,8 @@ describe('IntersectionObserver', () => {
     });
 
     it('should not report updates if the target is unobserved before they are delivered', () => {
-      const nodeRef = React.createRef<HostInstance>();
-      const scrollNodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
+      const scrollNodeRef = createRef<HostInstance>();
 
       const root = Fantom.createRoot();
       Fantom.runTask(() => {
@@ -1411,7 +1451,7 @@ describe('IntersectionObserver', () => {
     // target was incorrectly cleaned up when a single observer stopped
     // observing it.
     it('should work with multiple intersection observer instances', () => {
-      const nodeRef = React.createRef<HostInstance>();
+      const nodeRef = createRef<HostInstance>();
       let observer1: IntersectionObserver;
       let observer2: IntersectionObserver;
 

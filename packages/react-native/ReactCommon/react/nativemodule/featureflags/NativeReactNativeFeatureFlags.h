@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<25a5240280f85e296197d78a23aa1d5b>>
+ * @generated SignedSource<<f7fbc7ab177cd84524a544cf3f94ae19>>
  */
 
 /**
@@ -41,6 +41,8 @@ class NativeReactNativeFeatureFlags
 
   bool animatedShouldSignalBatch(jsi::Runtime& runtime);
 
+  bool avoidCeilingAvailableAndroidTextWidth(jsi::Runtime& runtime);
+
   bool cxxNativeAnimatedEnabled(jsi::Runtime& runtime);
 
   bool disableMainQueueSyncDispatchIOS(jsi::Runtime& runtime);
@@ -57,6 +59,10 @@ class NativeReactNativeFeatureFlags
 
   bool enableCustomFocusSearchOnClippedElementsAndroid(jsi::Runtime& runtime);
 
+  bool enableDestroyShadowTreeRevisionAsync(jsi::Runtime& runtime);
+
+  bool enableDoubleMeasurementFixAndroid(jsi::Runtime& runtime);
+
   bool enableEagerRootViewAttachment(jsi::Runtime& runtime);
 
   bool enableFabricLogs(jsi::Runtime& runtime);
@@ -69,8 +75,6 @@ class NativeReactNativeFeatureFlags
 
   bool enableIOSViewClipToPaddingBox(jsi::Runtime& runtime);
 
-  bool enableJSRuntimeGCOnMemoryPressureOnIOS(jsi::Runtime& runtime);
-
   bool enableLayoutAnimationsOnAndroid(jsi::Runtime& runtime);
 
   bool enableLayoutAnimationsOnIOS(jsi::Runtime& runtime);
@@ -79,9 +83,15 @@ class NativeReactNativeFeatureFlags
 
   bool enableNativeCSSParsing(jsi::Runtime& runtime);
 
+  bool enableNetworkEventReporting(jsi::Runtime& runtime);
+
   bool enableNewBackgroundAndBorderDrawables(jsi::Runtime& runtime);
 
+  bool enablePreparedTextLayout(jsi::Runtime& runtime);
+
   bool enablePropsUpdateReconciliationAndroid(jsi::Runtime& runtime);
+
+  bool enableResourceTimingAPI(jsi::Runtime& runtime);
 
   bool enableSynchronousStateUpdates(jsi::Runtime& runtime);
 
@@ -99,13 +109,15 @@ class NativeReactNativeFeatureFlags
 
   bool fuseboxNetworkInspectionEnabled(jsi::Runtime& runtime);
 
+  bool incorporateMaxLinesDuringAndroidLayout(jsi::Runtime& runtime);
+
   bool traceTurboModulePromiseRejectionsOnAndroid(jsi::Runtime& runtime);
 
   bool updateRuntimeShadowNodeReferencesOnCommit(jsi::Runtime& runtime);
 
   bool useAlwaysAvailableJSErrorHandling(jsi::Runtime& runtime);
 
-  bool useEditTextStockAndroidFocusBehavior(jsi::Runtime& runtime);
+  bool useAndroidTextLayoutWidthDirectly(jsi::Runtime& runtime);
 
   bool useFabricInterop(jsi::Runtime& runtime);
 

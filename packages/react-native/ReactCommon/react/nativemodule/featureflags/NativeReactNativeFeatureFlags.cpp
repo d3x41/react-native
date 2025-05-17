@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<29f7c553e89ba72e57040c9d63fc4fe8>>
+ * @generated SignedSource<<3c85cdc2dc3d2368d09a5c0aff4d083a>>
  */
 
 /**
@@ -54,6 +54,11 @@ bool NativeReactNativeFeatureFlags::animatedShouldSignalBatch(
   return ReactNativeFeatureFlags::animatedShouldSignalBatch();
 }
 
+bool NativeReactNativeFeatureFlags::avoidCeilingAvailableAndroidTextWidth(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::avoidCeilingAvailableAndroidTextWidth();
+}
+
 bool NativeReactNativeFeatureFlags::cxxNativeAnimatedEnabled(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::cxxNativeAnimatedEnabled();
@@ -94,6 +99,16 @@ bool NativeReactNativeFeatureFlags::enableCustomFocusSearchOnClippedElementsAndr
   return ReactNativeFeatureFlags::enableCustomFocusSearchOnClippedElementsAndroid();
 }
 
+bool NativeReactNativeFeatureFlags::enableDestroyShadowTreeRevisionAsync(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableDestroyShadowTreeRevisionAsync();
+}
+
+bool NativeReactNativeFeatureFlags::enableDoubleMeasurementFixAndroid(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableDoubleMeasurementFixAndroid();
+}
+
 bool NativeReactNativeFeatureFlags::enableEagerRootViewAttachment(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::enableEagerRootViewAttachment();
@@ -124,11 +139,6 @@ bool NativeReactNativeFeatureFlags::enableIOSViewClipToPaddingBox(
   return ReactNativeFeatureFlags::enableIOSViewClipToPaddingBox();
 }
 
-bool NativeReactNativeFeatureFlags::enableJSRuntimeGCOnMemoryPressureOnIOS(
-    jsi::Runtime& /*runtime*/) {
-  return ReactNativeFeatureFlags::enableJSRuntimeGCOnMemoryPressureOnIOS();
-}
-
 bool NativeReactNativeFeatureFlags::enableLayoutAnimationsOnAndroid(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::enableLayoutAnimationsOnAndroid();
@@ -149,14 +159,29 @@ bool NativeReactNativeFeatureFlags::enableNativeCSSParsing(
   return ReactNativeFeatureFlags::enableNativeCSSParsing();
 }
 
+bool NativeReactNativeFeatureFlags::enableNetworkEventReporting(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableNetworkEventReporting();
+}
+
 bool NativeReactNativeFeatureFlags::enableNewBackgroundAndBorderDrawables(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::enableNewBackgroundAndBorderDrawables();
 }
 
+bool NativeReactNativeFeatureFlags::enablePreparedTextLayout(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enablePreparedTextLayout();
+}
+
 bool NativeReactNativeFeatureFlags::enablePropsUpdateReconciliationAndroid(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::enablePropsUpdateReconciliationAndroid();
+}
+
+bool NativeReactNativeFeatureFlags::enableResourceTimingAPI(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableResourceTimingAPI();
 }
 
 bool NativeReactNativeFeatureFlags::enableSynchronousStateUpdates(
@@ -199,6 +224,11 @@ bool NativeReactNativeFeatureFlags::fuseboxNetworkInspectionEnabled(
   return ReactNativeFeatureFlags::fuseboxNetworkInspectionEnabled();
 }
 
+bool NativeReactNativeFeatureFlags::incorporateMaxLinesDuringAndroidLayout(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::incorporateMaxLinesDuringAndroidLayout();
+}
+
 bool NativeReactNativeFeatureFlags::traceTurboModulePromiseRejectionsOnAndroid(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::traceTurboModulePromiseRejectionsOnAndroid();
@@ -214,9 +244,9 @@ bool NativeReactNativeFeatureFlags::useAlwaysAvailableJSErrorHandling(
   return ReactNativeFeatureFlags::useAlwaysAvailableJSErrorHandling();
 }
 
-bool NativeReactNativeFeatureFlags::useEditTextStockAndroidFocusBehavior(
+bool NativeReactNativeFeatureFlags::useAndroidTextLayoutWidthDirectly(
     jsi::Runtime& /*runtime*/) {
-  return ReactNativeFeatureFlags::useEditTextStockAndroidFocusBehavior();
+  return ReactNativeFeatureFlags::useAndroidTextLayoutWidthDirectly();
 }
 
 bool NativeReactNativeFeatureFlags::useFabricInterop(

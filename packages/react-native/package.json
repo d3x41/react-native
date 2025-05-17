@@ -32,11 +32,13 @@
     ".": {
       "react-native-strict-api": "./types_generated/index.d.ts",
       "react-native-strict-api-UNSAFE-ALLOW-SUBPATHS": "./types_generated/index.d.ts",
+      "types": "./types/index.d.ts",
       "default": "./index.js"
     },
     "./*": {
       "react-native-strict-api": null,
       "react-native-strict-api-UNSAFE-ALLOW-SUBPATHS": "./types_generated/*.d.ts",
+      "types": "./*.d.ts",
       "default": "./*.js"
     },
     "./*.js": {
@@ -58,9 +60,11 @@
     "./ReactApple/*": null,
     "./ReactCommon/*": null,
     "./sdks/*": null,
+    "./src/fb_internal/*": "./src/fb_internal/*",
     "./src/*": null,
     "./third-party-podspecs/*": null,
     "./types/*": null,
+    "./types_generated/*": null,
     "./package.json": "./package.json"
   },
   "jest-junit": {
@@ -171,8 +175,8 @@
     "invariant": "^2.2.4",
     "jest-environment-node": "^29.7.0",
     "memoize-one": "^5.0.0",
-    "metro-runtime": "^0.82.0",
-    "metro-source-map": "^0.82.0",
+    "metro-runtime": "^0.82.3",
+    "metro-source-map": "^0.82.3",
     "nullthrows": "^1.1.1",
     "pretty-format": "^29.7.0",
     "promise": "^8.3.0",
