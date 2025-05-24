@@ -29,9 +29,10 @@ import com.facebook.react.views.text.DefaultStyleValuesUtil.getDefaultTextColorH
 /**
  * Previously a superclass of multiple text view managers. Now only used by [ReactTextViewManager].
  *
- * This is a "shadowing" view manager, which means that the [NativeViewHierarchyManager] will NOT
- * manage children of native [TextView] instances instantiated by this manager. Instead we
- * use @{link ReactBaseTextShadowNode} hierarchy to calculate a [Spannable] text represented the
+ * This is a "shadowing" view manager, which means that the
+ * [com.facebook.react.uimanager.NativeViewHierarchyManager] will NOT manage children of native
+ * [android.widget.TextView] instances instantiated by this manager. Instead we use @{link
+ * ReactBaseTextShadowNode} hierarchy to calculate a [android.text.Spannable] text represented the
  * whole text subtree.
  */
 internal abstract class ReactTextAnchorViewManager<C : ReactBaseTextShadowNode?> :
@@ -128,7 +129,7 @@ internal abstract class ReactTextAnchorViewManager<C : ReactBaseTextShadowNode?>
       defaultFloat = Float.NaN)
   public fun setBorderRadius(view: ReactTextView, index: Int, borderRadius: Float) {
     val radius =
-        if (java.lang.Float.isNaN(borderRadius)) {
+        if (borderRadius.isNaN()) {
           null
         } else {
           LengthPercentage(borderRadius, LengthPercentageType.POINT)

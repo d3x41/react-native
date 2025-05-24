@@ -60,7 +60,7 @@ import TextInputState from './TextInputState';
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 import * as React from 'react';
-import {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {useCallback, useLayoutEffect, useMemo, useRef, useState} from 'react';
 
 let AndroidTextInput;
 let AndroidTextInputCommands;
@@ -446,6 +446,7 @@ function InternalTextInput(props: TextInputProps): React.Node {
       */
       if (instance != null) {
         // $FlowFixMe[prop-missing] - See the explanation above.
+        // $FlowFixMe[unsafe-object-assign]
         Object.assign(instance, {
           clear(): void {
             if (inputRef.current != null) {
@@ -577,7 +578,7 @@ function InternalTextInput(props: TextInputProps): React.Node {
     rejectResponderTermination,
   } = props;
 
-  const config = React.useMemo(
+  const config = useMemo(
     () => ({
       hitSlop,
       onPress: (event: GestureResponderEvent) => {
@@ -783,7 +784,7 @@ const enterKeyHintToReturnTypeMap = {
   previous: 'previous',
   search: 'search',
   send: 'send',
-};
+} as const;
 
 const inputModeToKeyboardTypeMap = {
   none: 'default',
@@ -791,10 +792,11 @@ const inputModeToKeyboardTypeMap = {
   decimal: 'decimal-pad',
   numeric: 'number-pad',
   tel: 'phone-pad',
-  search: Platform.OS === 'ios' ? 'web-search' : 'default',
+  search:
+    Platform.OS === 'ios' ? ('web-search' as const) : ('default' as const),
   email: 'email-address',
   url: 'url',
-};
+} as const;
 
 // Map HTML autocomplete values to Android autoComplete values
 const autoCompleteWebToAutoCompleteAndroidMap = {
@@ -828,7 +830,7 @@ const autoCompleteWebToAutoCompleteAndroidMap = {
   'tel-country-code': 'tel-country-code',
   'tel-national': 'tel-national',
   username: 'username',
-};
+} as const;
 
 // Map HTML autocomplete values to iOS textContentType values
 const autoCompleteWebToTextContentTypeMap = {
@@ -868,29 +870,30 @@ const autoCompleteWebToTextContentTypeMap = {
   tel: 'telephoneNumber',
   url: 'URL',
   username: 'username',
-};
+} as const;
 
-const ExportedForwardRef: component(
+const TextInput: component(
   ref?: React.RefSetter<TextInputInstance>,
   ...props: React.ElementConfig<typeof InternalTextInput>
-) = React.forwardRef(function TextInput(
-  {
-    allowFontScaling = true,
-    rejectResponderTermination = true,
-    underlineColorAndroid = 'transparent',
-    autoComplete,
-    textContentType,
-    readOnly,
-    editable,
-    enterKeyHint,
-    returnKeyType,
-    inputMode,
-    showSoftInputOnFocus,
-    keyboardType,
-    ...restProps
-  },
-  forwardedRef: React.RefSetter<TextInputInstance>,
-) {
+) = function TextInput({
+  ref: forwardedRef,
+  allowFontScaling = true,
+  rejectResponderTermination = true,
+  underlineColorAndroid = 'transparent',
+  autoComplete,
+  textContentType,
+  readOnly,
+  editable,
+  enterKeyHint,
+  returnKeyType,
+  inputMode,
+  showSoftInputOnFocus,
+  keyboardType,
+  ...restProps
+}: {
+  ref?: React.RefSetter<TextInputInstance>,
+  ...React.ElementConfig<typeof InternalTextInput>,
+}) {
   return (
     <InternalTextInput
       allowFontScaling={allowFontScaling}
@@ -920,8 +923,7 @@ const ExportedForwardRef: component(
           : Platform.OS === 'ios' &&
               autoComplete &&
               autoComplete in autoCompleteWebToTextContentTypeMap
-            ? // $FlowFixMe[invalid-computed-prop]
-              // $FlowFixMe[prop-missing]
+            ? // $FlowFixMe[prop-missing]
               autoCompleteWebToTextContentTypeMap[autoComplete]
             : textContentType
       }
@@ -929,12 +931,12 @@ const ExportedForwardRef: component(
       forwardedRef={forwardedRef}
     />
   );
-});
+};
 
-ExportedForwardRef.displayName = 'TextInput';
+TextInput.displayName = 'TextInput';
 
 // $FlowFixMe[prop-missing]
-ExportedForwardRef.State = {
+TextInput.State = {
   currentlyFocusedInput: TextInputState.currentlyFocusedInput,
 
   currentlyFocusedField: TextInputState.currentlyFocusedField,
@@ -960,7 +962,7 @@ const verticalAlignToTextAlignVerticalMap = {
   top: 'top',
   bottom: 'bottom',
   middle: 'center',
-};
+} as const;
 
 // $FlowFixMe[unclear-type] Unclear type. Using `any` type is not safe.
-export default ExportedForwardRef as any as TextInputType;
+export default TextInput as any as TextInputType;

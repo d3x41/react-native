@@ -168,7 +168,7 @@ export default class AnimatedValue extends AnimatedWithChildren {
         'onAnimatedValueUpdate',
         data => {
           if (data.tag === nativeTag) {
-            this.__onAnimatedValueUpdateReceived(data.value);
+            this.__onAnimatedValueUpdateReceived(data.value, data.offset);
           }
         },
       );
@@ -246,7 +246,9 @@ export default class AnimatedValue extends AnimatedWithChildren {
     this._offset += this._value;
     this._value = 0;
     if (this.__isNative) {
-      NativeAnimatedAPI.extractAnimatedNodeOffset(this.__getNativeTag());
+      _executeAsAnimatedBatch(this.__getNativeTag().toString(), () =>
+        NativeAnimatedAPI.extractAnimatedNodeOffset(this.__getNativeTag()),
+      );
     }
   }
 
@@ -286,8 +288,11 @@ export default class AnimatedValue extends AnimatedWithChildren {
     }
   }
 
-  __onAnimatedValueUpdateReceived(value: number): void {
+  __onAnimatedValueUpdateReceived(value: number, offset?: number): void {
     this._updateValue(value, false /*flush*/);
+    if (offset != null) {
+      this._offset = offset;
+    }
   }
 
   /**

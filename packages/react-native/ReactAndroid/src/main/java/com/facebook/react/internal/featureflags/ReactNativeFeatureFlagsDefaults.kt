@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<bf8b0d4c128a040853d2b12f74597d46>>
+ * @generated SignedSource<<07ea15d4fd3f3bc73c8f49cd24724caf>>
  */
 
 /**
@@ -27,6 +27,8 @@ public open class ReactNativeFeatureFlagsDefaults : ReactNativeFeatureFlagsProvi
 
   override fun animatedShouldSignalBatch(): Boolean = false
 
+  override fun avoidCeilingAvailableAndroidTextWidth(): Boolean = true
+
   override fun cxxNativeAnimatedEnabled(): Boolean = false
 
   override fun disableMainQueueSyncDispatchIOS(): Boolean = false
@@ -43,6 +45,10 @@ public open class ReactNativeFeatureFlagsDefaults : ReactNativeFeatureFlagsProvi
 
   override fun enableCustomFocusSearchOnClippedElementsAndroid(): Boolean = true
 
+  override fun enableDestroyShadowTreeRevisionAsync(): Boolean = false
+
+  override fun enableDoubleMeasurementFixAndroid(): Boolean = false
+
   override fun enableEagerRootViewAttachment(): Boolean = false
 
   override fun enableFabricLogs(): Boolean = false
@@ -53,9 +59,11 @@ public open class ReactNativeFeatureFlagsDefaults : ReactNativeFeatureFlagsProvi
 
   override fun enableFontScaleChangesUpdatingLayout(): Boolean = false
 
+  override fun enableIOSTextBaselineOffsetPerLine(): Boolean = false
+
   override fun enableIOSViewClipToPaddingBox(): Boolean = false
 
-  override fun enableJSRuntimeGCOnMemoryPressureOnIOS(): Boolean = false
+  override fun enableIntersectionObserverEventLoopIntegration(): Boolean = true
 
   override fun enableLayoutAnimationsOnAndroid(): Boolean = false
 
@@ -63,11 +71,19 @@ public open class ReactNativeFeatureFlagsDefaults : ReactNativeFeatureFlagsProvi
 
   override fun enableMainQueueModulesOnIOS(): Boolean = false
 
+  override fun enableModuleArgumentNSNullConversionIOS(): Boolean = false
+
   override fun enableNativeCSSParsing(): Boolean = false
+
+  override fun enableNetworkEventReporting(): Boolean = false
 
   override fun enableNewBackgroundAndBorderDrawables(): Boolean = true
 
+  override fun enablePreparedTextLayout(): Boolean = false
+
   override fun enablePropsUpdateReconciliationAndroid(): Boolean = false
+
+  override fun enableResourceTimingAPI(): Boolean = false
 
   override fun enableSynchronousStateUpdates(): Boolean = false
 
@@ -85,13 +101,15 @@ public open class ReactNativeFeatureFlagsDefaults : ReactNativeFeatureFlagsProvi
 
   override fun fuseboxNetworkInspectionEnabled(): Boolean = false
 
+  override fun incorporateMaxLinesDuringAndroidLayout(): Boolean = true
+
   override fun traceTurboModulePromiseRejectionsOnAndroid(): Boolean = false
 
   override fun updateRuntimeShadowNodeReferencesOnCommit(): Boolean = false
 
   override fun useAlwaysAvailableJSErrorHandling(): Boolean = false
 
-  override fun useEditTextStockAndroidFocusBehavior(): Boolean = true
+  override fun useAndroidTextLayoutWidthDirectly(): Boolean = true
 
   override fun useFabricInterop(): Boolean = true
 

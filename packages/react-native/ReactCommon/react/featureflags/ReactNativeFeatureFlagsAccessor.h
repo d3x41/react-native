@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<2f0e94ce6ef3ef774416738df820b966>>
+ * @generated SignedSource<<a95696cc00506fd1cc1e147e45a3098e>>
  */
 
 /**
@@ -34,6 +34,7 @@ class ReactNativeFeatureFlagsAccessor {
 
   bool commonTestFlag();
   bool animatedShouldSignalBatch();
+  bool avoidCeilingAvailableAndroidTextWidth();
   bool cxxNativeAnimatedEnabled();
   bool disableMainQueueSyncDispatchIOS();
   bool disableMountItemReorderingAndroid();
@@ -42,19 +43,26 @@ class ReactNativeFeatureFlagsAccessor {
   bool enableBridgelessArchitecture();
   bool enableCppPropsIteratorSetter();
   bool enableCustomFocusSearchOnClippedElementsAndroid();
+  bool enableDestroyShadowTreeRevisionAsync();
+  bool enableDoubleMeasurementFixAndroid();
   bool enableEagerRootViewAttachment();
   bool enableFabricLogs();
   bool enableFabricRenderer();
   bool enableFixForParentTagDuringReparenting();
   bool enableFontScaleChangesUpdatingLayout();
+  bool enableIOSTextBaselineOffsetPerLine();
   bool enableIOSViewClipToPaddingBox();
-  bool enableJSRuntimeGCOnMemoryPressureOnIOS();
+  bool enableIntersectionObserverEventLoopIntegration();
   bool enableLayoutAnimationsOnAndroid();
   bool enableLayoutAnimationsOnIOS();
   bool enableMainQueueModulesOnIOS();
+  bool enableModuleArgumentNSNullConversionIOS();
   bool enableNativeCSSParsing();
+  bool enableNetworkEventReporting();
   bool enableNewBackgroundAndBorderDrawables();
+  bool enablePreparedTextLayout();
   bool enablePropsUpdateReconciliationAndroid();
+  bool enableResourceTimingAPI();
   bool enableSynchronousStateUpdates();
   bool enableViewCulling();
   bool enableViewRecycling();
@@ -63,10 +71,11 @@ class ReactNativeFeatureFlagsAccessor {
   bool fixMappingOfEventPrioritiesBetweenFabricAndReact();
   bool fuseboxEnabledRelease();
   bool fuseboxNetworkInspectionEnabled();
+  bool incorporateMaxLinesDuringAndroidLayout();
   bool traceTurboModulePromiseRejectionsOnAndroid();
   bool updateRuntimeShadowNodeReferencesOnCommit();
   bool useAlwaysAvailableJSErrorHandling();
-  bool useEditTextStockAndroidFocusBehavior();
+  bool useAndroidTextLayoutWidthDirectly();
   bool useFabricInterop();
   bool useNativeViewConfigsInBridgelessMode();
   bool useOptimizedEventBatchingOnAndroid();
@@ -85,10 +94,11 @@ class ReactNativeFeatureFlagsAccessor {
   std::unique_ptr<ReactNativeFeatureFlagsProvider> currentProvider_;
   bool wasOverridden_;
 
-  std::array<std::atomic<const char*>, 42> accessedFeatureFlags_;
+  std::array<std::atomic<const char*>, 51> accessedFeatureFlags_;
 
   std::atomic<std::optional<bool>> commonTestFlag_;
   std::atomic<std::optional<bool>> animatedShouldSignalBatch_;
+  std::atomic<std::optional<bool>> avoidCeilingAvailableAndroidTextWidth_;
   std::atomic<std::optional<bool>> cxxNativeAnimatedEnabled_;
   std::atomic<std::optional<bool>> disableMainQueueSyncDispatchIOS_;
   std::atomic<std::optional<bool>> disableMountItemReorderingAndroid_;
@@ -97,19 +107,26 @@ class ReactNativeFeatureFlagsAccessor {
   std::atomic<std::optional<bool>> enableBridgelessArchitecture_;
   std::atomic<std::optional<bool>> enableCppPropsIteratorSetter_;
   std::atomic<std::optional<bool>> enableCustomFocusSearchOnClippedElementsAndroid_;
+  std::atomic<std::optional<bool>> enableDestroyShadowTreeRevisionAsync_;
+  std::atomic<std::optional<bool>> enableDoubleMeasurementFixAndroid_;
   std::atomic<std::optional<bool>> enableEagerRootViewAttachment_;
   std::atomic<std::optional<bool>> enableFabricLogs_;
   std::atomic<std::optional<bool>> enableFabricRenderer_;
   std::atomic<std::optional<bool>> enableFixForParentTagDuringReparenting_;
   std::atomic<std::optional<bool>> enableFontScaleChangesUpdatingLayout_;
+  std::atomic<std::optional<bool>> enableIOSTextBaselineOffsetPerLine_;
   std::atomic<std::optional<bool>> enableIOSViewClipToPaddingBox_;
-  std::atomic<std::optional<bool>> enableJSRuntimeGCOnMemoryPressureOnIOS_;
+  std::atomic<std::optional<bool>> enableIntersectionObserverEventLoopIntegration_;
   std::atomic<std::optional<bool>> enableLayoutAnimationsOnAndroid_;
   std::atomic<std::optional<bool>> enableLayoutAnimationsOnIOS_;
   std::atomic<std::optional<bool>> enableMainQueueModulesOnIOS_;
+  std::atomic<std::optional<bool>> enableModuleArgumentNSNullConversionIOS_;
   std::atomic<std::optional<bool>> enableNativeCSSParsing_;
+  std::atomic<std::optional<bool>> enableNetworkEventReporting_;
   std::atomic<std::optional<bool>> enableNewBackgroundAndBorderDrawables_;
+  std::atomic<std::optional<bool>> enablePreparedTextLayout_;
   std::atomic<std::optional<bool>> enablePropsUpdateReconciliationAndroid_;
+  std::atomic<std::optional<bool>> enableResourceTimingAPI_;
   std::atomic<std::optional<bool>> enableSynchronousStateUpdates_;
   std::atomic<std::optional<bool>> enableViewCulling_;
   std::atomic<std::optional<bool>> enableViewRecycling_;
@@ -118,10 +135,11 @@ class ReactNativeFeatureFlagsAccessor {
   std::atomic<std::optional<bool>> fixMappingOfEventPrioritiesBetweenFabricAndReact_;
   std::atomic<std::optional<bool>> fuseboxEnabledRelease_;
   std::atomic<std::optional<bool>> fuseboxNetworkInspectionEnabled_;
+  std::atomic<std::optional<bool>> incorporateMaxLinesDuringAndroidLayout_;
   std::atomic<std::optional<bool>> traceTurboModulePromiseRejectionsOnAndroid_;
   std::atomic<std::optional<bool>> updateRuntimeShadowNodeReferencesOnCommit_;
   std::atomic<std::optional<bool>> useAlwaysAvailableJSErrorHandling_;
-  std::atomic<std::optional<bool>> useEditTextStockAndroidFocusBehavior_;
+  std::atomic<std::optional<bool>> useAndroidTextLayoutWidthDirectly_;
   std::atomic<std::optional<bool>> useFabricInterop_;
   std::atomic<std::optional<bool>> useNativeViewConfigsInBridgelessMode_;
   std::atomic<std::optional<bool>> useOptimizedEventBatchingOnAndroid_;

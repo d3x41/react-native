@@ -7,8 +7,7 @@
 
 package com.facebook.react.views.text
 
-import android.text.Layout
-import android.text.Spannable
+import android.text.Spanned
 import android.view.View
 import com.facebook.react.R
 import com.facebook.react.internal.SystraceSection
@@ -31,7 +30,6 @@ import com.facebook.react.uimanager.style.BorderStyle
 import com.facebook.react.uimanager.style.LogicalEdge
 import com.facebook.react.uimanager.style.Overflow
 import com.facebook.react.views.text.ReactTextViewAccessibilityDelegate.AccessibilityLinks
-import com.facebook.react.views.text.internal.span.ReactClickableSpan
 import java.util.HashMap
 
 @ReactModule(name = PreparedLayoutTextViewManager.REACT_CLASS)
@@ -64,20 +62,17 @@ internal class PreparedLayoutTextViewManager :
 
   override fun updateExtraData(view: PreparedLayoutTextView, extraData: Any) {
     SystraceSection("PreparedLayoutTextViewManager.updateExtraData").use { _ ->
-      val layout = extraData as Layout
+      val layout = (extraData as PreparedLayout).layout
       view.layout = layout
 
       // If this text view contains any clickable spans, set a view tag and reset the accessibility
       // delegate so that these can be picked up by the accessibility system.
-      if (layout.text is Spannable) {
-        val spannableText = layout.text as Spannable
-
-        val clickableSpans =
-            spannableText.getSpans(0, layout.text.length, ReactClickableSpan::class.java)
+      if (layout.text is Spanned) {
+        val spannedText = layout.text as Spanned
+        val accessibilityLinks = AccessibilityLinks(spannedText)
         view.setTag(
             R.id.accessibility_links,
-            if (clickableSpans.size > 0) AccessibilityLinks(clickableSpans, spannableText)
-            else null)
+            if (accessibilityLinks.size() > 0) accessibilityLinks else null)
         ReactTextViewAccessibilityDelegate.resetDelegate(
             view, view.isFocusable, view.importantForAccessibility)
       }
@@ -90,7 +85,7 @@ internal class PreparedLayoutTextViewManager :
       stateWrapper: StateWrapper
   ): Any? = (stateWrapper as? ReferenceStateWrapper)?.stateDataReference
 
-  override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {
+  override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
     val baseEventTypeConstants = super.getExportedCustomDirectEventTypeConstants()
     val eventTypeConstants = baseEventTypeConstants ?: HashMap()
     eventTypeConstants.put("topTextLayout", mapOf("registrationName" to "onTextLayout"))
@@ -193,10 +188,7 @@ internal class PreparedLayoutTextViewManager :
     view.setPadding(left, top, right, bottom)
   }
 
-  override fun getShadowNodeClass(): Class<out LayoutShadowNode> {
-    throw UnsupportedOperationException(
-        "PreparedLayoutTextViewManager does not use legacy arch shadow nodes")
-  }
+  override fun getShadowNodeClass(): Class<out LayoutShadowNode> = LayoutShadowNode::class.java
 
   override fun addView(parent: PreparedLayoutTextView, child: View, index: Int) {
     parent.addView(child, index)

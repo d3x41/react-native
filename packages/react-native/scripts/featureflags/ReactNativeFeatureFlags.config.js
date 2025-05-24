@@ -70,6 +70,16 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    avoidCeilingAvailableAndroidTextWidth: {
+      defaultValue: true,
+      metadata: {
+        description:
+          'Do not incorrectly ceil the available width of an Android text layout',
+        expectedReleaseValue: true,
+        purpose: 'release',
+      },
+      ossReleaseStage: 'stable',
+    },
     cxxNativeAnimatedEnabled: {
       defaultValue: false,
       metadata: {
@@ -155,6 +165,27 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableDestroyShadowTreeRevisionAsync: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-04-29',
+        description:
+          'Enables destructor calls for ShadowTreeRevision in the background to reduce UI thread work.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableDoubleMeasurementFixAndroid: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'When enabled a subset of components will avoid double measurement on Android.',
+        expectedReleaseValue: true,
+        purpose: 'operational',
+      },
+      ossReleaseStage: 'none',
+    },
     enableEagerRootViewAttachment: {
       defaultValue: false,
       metadata: {
@@ -206,6 +237,17 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableIOSTextBaselineOffsetPerLine: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-05-21',
+        description:
+          'Applies base offset for each line of text separately on iOS.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
     enableIOSViewClipToPaddingBox: {
       defaultValue: false,
       metadata: {
@@ -216,12 +258,14 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    enableJSRuntimeGCOnMemoryPressureOnIOS: {
-      defaultValue: false,
+    enableIntersectionObserverEventLoopIntegration: {
+      defaultValue: true,
       metadata: {
-        description: 'Trigger JS runtime GC on memory pressure event on iOS',
+        dateAdded: '2025-04-16',
+        description:
+          'Integrates IntersectionObserver in the Event Loop in the new architecture, to dispatch the initial notifications for observations in the "Update the rendering" step.',
         expectedReleaseValue: true,
-        purpose: 'release',
+        purpose: 'experimentation',
       },
       ossReleaseStage: 'none',
     },
@@ -255,6 +299,16 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableModuleArgumentNSNullConversionIOS: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enable NSNull conversion when handling module arguments on iOS',
+        expectedReleaseValue: true,
+        purpose: 'release',
+      },
+      ossReleaseStage: 'none',
+    },
     enableNativeCSSParsing: {
       defaultValue: false,
       metadata: {
@@ -263,6 +317,16 @@ const definitions: FeatureFlagDefinitions = {
           'Parse CSS strings using the Fabric CSS parser instead of ViewConfig processing',
         expectedReleaseValue: true,
         purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableNetworkEventReporting: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enable network event reporting hooks in each native platform through `NetworkReporter`. This flag should be combined with `enableResourceTimingAPI` and `fuseboxNetworkInspectionEnabled` to enable end-to-end reporting behaviour via the Web Performance API and CDP debugging respectively.',
+        expectedReleaseValue: true,
+        purpose: 'release',
       },
       ossReleaseStage: 'none',
     },
@@ -277,6 +341,16 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enablePreparedTextLayout: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-05-01',
+        description: 'Enables caching text layout artifacts for later reuse',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
     enablePropsUpdateReconciliationAndroid: {
       defaultValue: false,
       metadata: {
@@ -285,6 +359,16 @@ const definitions: FeatureFlagDefinitions = {
           'When enabled, Android will receive prop updates based on the differences between the last rendered shadow node and the last committed shadow node.',
         expectedReleaseValue: true,
         purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableResourceTimingAPI: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enables the reporting of network resource timings through `PerformanceObserver`.',
+        expectedReleaseValue: true,
+        purpose: 'release',
       },
       ossReleaseStage: 'none',
     },
@@ -375,6 +459,16 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    incorporateMaxLinesDuringAndroidLayout: {
+      defaultValue: true,
+      metadata: {
+        description:
+          'Set maxLines and ellipsization during Android layout creation',
+        expectedReleaseValue: true,
+        purpose: 'release',
+      },
+      ossReleaseStage: 'stable',
+    },
     traceTurboModulePromiseRejectionsOnAndroid: {
       defaultValue: false,
       metadata: {
@@ -406,15 +500,15 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
-    useEditTextStockAndroidFocusBehavior: {
+    useAndroidTextLayoutWidthDirectly: {
       defaultValue: true,
       metadata: {
         description:
-          'If true, focusing in ReactEditText will mainly use stock Android requestFocus() behavior. If false it will use legacy custom focus behavior.',
+          'Trust the width of a text layout we create, instead of re-deriving it from its contents',
         expectedReleaseValue: true,
         purpose: 'release',
       },
-      ossReleaseStage: 'none',
+      ossReleaseStage: 'stable',
     },
     useFabricInterop: {
       defaultValue: true,
@@ -549,6 +643,16 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableVirtualViewDebugFeatures: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enables VirtualView debug features such as logging and overlays.',
+        expectedReleaseValue: false,
+        purpose: 'operational',
+      },
+      ossReleaseStage: 'none',
+    },
     fixVirtualizeListCollapseWindowSize: {
       defaultValue: false,
       metadata: {
@@ -567,6 +671,17 @@ const definitions: FeatureFlagDefinitions = {
           'Function used to enable / disabled Layout Animations in React Native.',
         expectedReleaseValue: true,
         purpose: 'release',
+      },
+      ossReleaseStage: 'none',
+    },
+    reduceDefaultPropsInView: {
+      defaultValue: true,
+      metadata: {
+        dateAdded: '2025-5-12',
+        description:
+          'Optimize how default (accessibility) props are processed in View to avoid unnecessary keys.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
       },
       ossReleaseStage: 'none',
     },
@@ -607,6 +722,16 @@ const definitions: FeatureFlagDefinitions = {
       metadata: {
         dateAdded: '2024-03-05',
         description: 'Enables use of setNativeProps in JS driven animations.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    utilizeTokensInIntersectionObserver: {
+      defaultValue: true,
+      metadata: {
+        dateAdded: '2025-05-06',
+        description: 'Use tokens in IntersectionObserver vs ShadowNode.',
         expectedReleaseValue: true,
         purpose: 'experimentation',
       },

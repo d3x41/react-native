@@ -56,7 +56,7 @@ import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.uimanager.style.BorderRadiusProp
 import com.facebook.react.uimanager.style.BorderStyle.Companion.fromString
 import com.facebook.react.uimanager.style.LogicalEdge
-import com.facebook.react.views.imagehelper.ResourceDrawableIdHelper.Companion.instance
+import com.facebook.react.views.imagehelper.ResourceDrawableIdHelper
 import com.facebook.react.views.scroll.ScrollEventType
 import com.facebook.react.views.scroll.ScrollEventType.Companion.getJSEventName
 import com.facebook.react.views.text.DefaultStyleValuesUtil.getDefaultTextColor
@@ -598,7 +598,7 @@ public open class ReactTextInputManager public constructor() :
 
   @ReactProp(name = "inlineImageLeft")
   public fun setInlineImageLeft(view: ReactEditText, resource: String?) {
-    val id = instance.getResourceDrawableId(view.context, resource)
+    val id = ResourceDrawableIdHelper.getResourceDrawableId(view.context, resource)
     view.setCompoundDrawablesWithIntrinsicBounds(id, 0, 0, 0)
   }
 
@@ -807,7 +807,7 @@ public open class ReactTextInputManager public constructor() :
       defaultFloat = Float.NaN)
   public fun setBorderRadius(view: ReactEditText, index: Int, borderRadius: Float) {
     val radius =
-        if (java.lang.Float.isNaN(borderRadius)) {
+        if (borderRadius.isNaN()) {
           null
         } else {
           LengthPercentage(borderRadius, LengthPercentageType.POINT)
@@ -926,7 +926,7 @@ public open class ReactTextInputManager public constructor() :
         }
 
         if (shouldBlur) {
-          editText.clearFocus()
+          editText.clearFocusAndMaybeRefocus()
         }
 
         // Prevent default behavior except when we want it to insert a newline.
